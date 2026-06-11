@@ -16,6 +16,54 @@ const loginElements = '.login__title, .login__group, .login__button, .login__img
 /** Verhindert parallele Login-/Willkommens-Sequenzen. */
 let isTransitioning = false
 
+/*=============== LANDING PAGE INTRO ANIMATION ===============*/
+window.addEventListener('DOMContentLoaded', () => {
+   const tl = gsap.timeline();
+   
+   // Titel fliegt smooth von oben ein
+   tl.from('.landing__title', {
+      y: -50,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+   });
+   
+   // Untertitel kommt leicht verzögert von links
+   tl.from('.landing__subtitle', {
+      x: -30,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out'
+   }, '-=0.6');
+   
+   // Get-Started-Button ploppt dynamisch auf
+   tl.from('.landing__button', {
+      scale: 0.8,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'back.out(1.7)'
+   }, '-=0.4');
+
+   // BONUS: Lässt die Hintergrund-Blobs unendlich im Hintergrund wabern
+   gsap.to('.liquid-bg__blob--1', {
+      x: '20vw',
+      y: '8vh',
+      duration: 12,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+   });
+
+   gsap.to('.liquid-bg__blob--2', {
+      x: '-15vw',
+      y: '-10vh',
+      duration: 15,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+   }, 0);
+});
+
 /*=============== LOGIN INTRO (callable) ===============*/
 const loginIntroVars = { opacity: 0, y: -60, ease: 'power2.out', duration: 1.2 }
 
@@ -32,7 +80,6 @@ function playLoginIntro() {
    tl.to(loginContent, { scaleY: 1, duration: 0.6, ease: 'power3.out' }, '-=0.3')
    tl.to(loginContent, { scaleX: 1, duration: 0.7, ease: 'power3.out' }, '-=0.2')
 
-   // Let the text, fields and image begin earlier so the panel feels alive sooner
    tl.from('.login__title', { opacity: 0, y: -60, duration: 0.75, ease: 'power2.out' }, '-=0.3')
    tl.from('.login__group, .login__button', { opacity: 0, y: -60, duration: 0.75, stagger: 0.1, ease: 'power2.out' }, '-=0.2')
    tl.from('.login__img', { opacity: 0, y: 0, x: 100, duration: 0.8, ease: 'elastic.out(1, 0.6)' }, '-=0.15')
@@ -61,7 +108,6 @@ if (landingBtn) {
       if (loginSection) {
          loginSection.classList.remove('app-hidden')
          loginSection.setAttribute('aria-hidden', 'false')
-         // play the login intro animation now
          playLoginIntro()
       }
    })
@@ -87,8 +133,6 @@ passwordInput.addEventListener('input', hideLoginError)
 function animateLoginOut() {
    const tl = gsap.timeline()
 
-   // 1. Elements animate out (mirroring entry sequence and timing)
-   // Image exits (mirroring elastic entry with elastic.in for exact symmetry)
    tl.to('.login__img', {
       x: 100,
       opacity: 0,
@@ -96,7 +140,6 @@ function animateLoginOut() {
       ease: 'elastic.in(1, 0.6)',
    })
 
-   // Groups & Button exit
    tl.to('.login__group, .login__button', {
       y: -60,
       opacity: 0,
@@ -105,7 +148,6 @@ function animateLoginOut() {
       ease: 'power2.in',
    }, '-=1.0')
 
-   // Title exits
    tl.to('.login__title', {
       y: -60,
       opacity: 0,
@@ -113,7 +155,6 @@ function animateLoginOut() {
       ease: 'power2.in',
    }, '-=1.0')
 
-   // 2. Container closes (exact mirror of the entrance timeline)
    tl.to(loginContent, {
       scaleX: 0.2,
       duration: 0.7,
@@ -165,7 +206,6 @@ function playWelcomeSequence(displayName) {
       },
    })
 
-   // Slower and gentler entry
    tl.to(welcomeBg, {
       y: '0%',
       duration: 1.5,
@@ -178,12 +218,10 @@ function playWelcomeSequence(displayName) {
       '-=1.0'
    )
 
-   // Stay in the center slightly longer for a calm and high-quality feel
    tl.to({}, { duration: 1.8 })
 
    tl.addLabel('hero-exit')
 
-   // Slower exit - text slides up, the interface wakes up and brightens later in the movement
    tl.to(welcomeText, {
       y: '-40vh',
       opacity: 0,
@@ -266,7 +304,6 @@ loginForm.addEventListener('submit', (event) => {
    exitTl.eventCallback('onComplete', () => {
       loginSection.classList.add('app-hidden')
       
-      // FIX: Setzt das gesamte Login-Fenster UND alle verschobenen Buttons/Titel komplett auf CSS-Standard zurück!
       gsap.set([loginContent, '.login__group', '.login__button', '.login__title', '.login__img'], { clearProps: 'all' })
       
       AnimationUtils.resetPageScroll()
@@ -279,7 +316,6 @@ loginForm.addEventListener('submit', (event) => {
 const existingSession = Auth.getSession()
 
 if (existingSession) {
-   // FIX: Landing Page und Login-Sektion beim App-Start rigoros verstecken, wenn eine Session läuft!
    const landingSection = document.getElementById('app-landing')
    if (landingSection) landingSection.classList.add('app-hidden')
    if (loginSection) loginSection.classList.add('app-hidden')
@@ -297,21 +333,18 @@ if (existingSession) {
       playWelcomeSequence(existingSession.displayName)
    }
 }
-   /*=============== SHOW / HIDE PASSWORD ===============*/
+
+/*=============== SHOW / HIDE PASSWORD ===============*/
 const passwordToggleEye = document.getElementById('password-eye')
 
 if (passwordToggleEye && passwordInput) {
    passwordToggleEye.addEventListener('click', () => {
-      // Wenn es verdeckt ist, zeige den Text an
       if (passwordInput.type === 'password') {
          passwordInput.type = 'text'
-         // Ändert das Icon zu einem offenen Auge
          passwordToggleEye.classList.remove('ri-eye-off-line')
          passwordToggleEye.classList.add('ri-eye-line')
       } else {
-         // Wenn es sichtbar ist, mach wieder Punkte daraus
          passwordInput.type = 'password'
-         // Ändert das Icon wieder zu einem durchgestrichenen Auge
          passwordToggleEye.classList.remove('ri-eye-line')
          passwordToggleEye.classList.add('ri-eye-off-line')
       }
