@@ -949,19 +949,21 @@ html.slow-theme-transition .dashboard__card-icon {
 }
 
 .landing__title {
-   font-size: 3rem; /* Macht es schön groß */
+   /* Mindestgröße: 1.8rem, Dynamisch: 5vw, Maximalgröße: 3rem */
+   font-size: clamp(1.8rem, 5vw, 3rem); 
    line-height: 1.2;
    font-weight: 800;
    color: #fff;
+   text-align: center; /* Zentriert den Text, das sieht auf dem Handy sauberer aus */
+   padding: 0 15px;    /* Gibt dem Text rechts und links Sicherheitsabstand zum Rand */
 }
 
-/* Der magische Farbverlauf für den Namen */
+/* Der magische Farbverlauf für den Namen bleibt gleich */
 .landing__title-highlight {
    background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
    -webkit-background-clip: text;
    -webkit-text-fill-color: transparent;
    display: inline-block;
    position: relative;
-   /* Ein subtiler Glüheffekt im Hintergrund */
    text-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
 }
