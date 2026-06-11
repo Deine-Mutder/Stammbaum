@@ -12,7 +12,7 @@ const Auth = (() => {
     * (z. B. stammbaumId, permissions, theme).
     */
    const users = {
-      defaultuser: {
+      user: {
          password: '1234',
          displayName: 'user',
          role: 'member',
