@@ -1,5 +1,5 @@
 /*=============== GOOGLE FONTS ===============*/
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Syne:wght@400..800&display=swap');
 
 /*=============== VARIABLES CSS ===============*/
 :root{
@@ -16,6 +16,7 @@
    /*========== Font and typography ==========*/
    /*.5rem = 8px | 1rem = 16px ...*/
    --body-font: "Syne", sans-serif;
+   --welcome-font: "Outfit", sans-serif;
 
    --big-font-size: 1.5rem;
    --normal-font-size: .938rem;

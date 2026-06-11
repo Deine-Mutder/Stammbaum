@@ -1,0 +1,92 @@
+/*=============== FULLSCREEN WELCOME ===============*/
+.welcome-screen{
+   position: fixed;
+   inset: 0;
+   z-index: 100;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   overflow: hidden;
+   visibility: hidden;
+   opacity: 0;
+   pointer-events: none;
+
+   &--active{
+      visibility: visible;
+      pointer-events: auto;
+   }
+
+   &__bg{
+      position: absolute;
+      inset: -10% 0 0;
+      will-change: transform;
+   }
+   &__base{
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 120% 80% at 50% 100%, hsl(263, 45%, 12%) 0%, var(--body-color) 55%);
+   }
+   &__glow{
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(72px);
+      will-change: transform, opacity;
+
+      &--trail{
+         width: min(90vw, 680px);
+         height: min(55vh, 420px);
+         background: linear-gradient(
+            135deg,
+            hsla(263, 85%, 58%, .55) 0%,
+            hsla(280, 70%, 48%, .35) 45%,
+            hsla(263, 90%, 62%, .15) 100%
+         );
+         bottom: -8%;
+         right: -12%;
+         transform: rotate(-18deg);
+      }
+      &--accent{
+         width: min(55vw, 380px);
+         height: min(55vw, 380px);
+         background: hsla(263, 75%, 52%, .28);
+         top: 8%;
+         left: -8%;
+      }
+      &--core{
+         width: min(40vw, 280px);
+         height: min(40vw, 280px);
+         background: hsla(263, 90%, 65%, .22);
+         bottom: 28%;
+         left: 38%;
+         filter: blur(96px);
+      }
+   }
+   &__text-wrap{
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding-inline: 1.5rem;
+      pointer-events: none;
+   }
+   &__text{
+      font-family: var(--welcome-font);
+      font-size: clamp(2.5rem, 9vw, 4.25rem);
+      font-weight: 500;
+      line-height: 1.15;
+      color: var(--title-color);
+      text-align: center;
+      letter-spacing: -0.03em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      text-shadow:
+         0 0 40px hsla(263, 85%, 62%, .35),
+         0 0 80px hsla(263, 70%, 50%, .18),
+         0 2px 24px hsla(0, 0%, 0%, .4);
+      opacity: 0;
+      will-change: transform, opacity;
+   }
+}
