@@ -80,12 +80,13 @@
                      <label for="username" class="login__label">Benutzername</label>
                   </div>
                   
-                  <div class="login__box">
+                  <div class="login__box" style="position: relative;">
                      <i class="ri-lock-2-fill login__icon"></i>
                      <input
                         type="password"
                         name="password"
-                        autocomplete="current-password" data-lpignore="true"
+                        autocomplete="current-password" 
+                        data-lpignore="true"
                         data-form-type="other"
                         required
                         placeholder=" "
@@ -94,6 +95,8 @@
                         readonly
                      >
                      <label for="password" class="login__label">Passwort</label>
+   
+                     <i class="ri-eye-off-line login__eye" id="password-eye" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10;"></i>
                   </div>
                </div>
                <button type="submit" class="login__button" id="login-button">

@@ -297,3 +297,23 @@ if (existingSession) {
       playWelcomeSequence(existingSession.displayName)
    }
 }
+   /*=============== SHOW / HIDE PASSWORD ===============*/
+const passwordToggleEye = document.getElementById('password-eye')
+
+if (passwordToggleEye && passwordInput) {
+   passwordToggleEye.addEventListener('click', () => {
+      // Wenn es verdeckt ist, zeige den Text an
+      if (passwordInput.type === 'password') {
+         passwordInput.type = 'text'
+         // Ändert das Icon zu einem offenen Auge
+         passwordToggleEye.classList.remove('ri-eye-off-line')
+         passwordToggleEye.classList.add('ri-eye-line')
+      } else {
+         // Wenn es sichtbar ist, mach wieder Punkte daraus
+         passwordInput.type = 'password'
+         // Ändert das Icon wieder zu einem durchgestrichenen Auge
+         passwordToggleEye.classList.remove('ri-eye-line')
+         passwordToggleEye.classList.add('ri-eye-off-line')
+      }
+   })
+}
