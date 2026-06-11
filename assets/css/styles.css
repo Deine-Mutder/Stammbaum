@@ -947,3 +947,21 @@ html.slow-theme-transition .dashboard__card-icon {
     overflow: hidden;
   }
 }
+
+.landing__title {
+   font-size: 3rem; /* Macht es schön groß */
+   line-height: 1.2;
+   font-weight: 800;
+   color: #fff;
+}
+
+/* Der magische Farbverlauf für den Namen */
+.landing__title-highlight {
+   background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   display: inline-block;
+   position: relative;
+   /* Ein subtiler Glüheffekt im Hintergrund */
+   text-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+}
