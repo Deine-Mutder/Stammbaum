@@ -16,9 +16,6 @@ const Auth = (() => {
          password: '1234',
          displayName: 'user1',
          role: 'member',
-         // Platzhalter für spätere benutzerbezogene Inhalte:
-         // stammbaumId: 'tree-user1',
-         // permissions: ['view', 'edit'],
       },
       user2: {
          password: '1234',
@@ -113,6 +110,7 @@ const Auth = (() => {
 
    /**
     * Leitet eingeloggte Benutzer weiter, wenn Willkommensanimation bereits gezeigt wurde.
+    * Verhindert das Überlappen beim Neuladen (Refresh).
     * @returns {boolean} true wenn weitergeleitet
     */
    function redirectIfAuthenticated() {
@@ -120,6 +118,15 @@ const Auth = (() => {
       if (!session) return false
 
       if (hasWelcomeShown()) {
+         // FIX: Wenn die Seite neu geladen wird, blenden wir Landing und Login SOFORT aus
+         const landingPage = document.getElementById('app-landing')
+         const loginPage = document.getElementById('app-login')
+         const dashboardPage = document.getElementById('app-dashboard')
+
+         if (landingPage) landingPage.classList.add('app-hidden')
+         if (loginPage) loginPage.classList.add('app-hidden')
+         if (dashboardPage) dashboardPage.classList.remove('app-hidden')
+
          return true
       }
 

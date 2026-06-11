@@ -276,7 +276,10 @@ loginForm.addEventListener('submit', (event) => {
 const existingSession = Auth.getSession()
 
 if (existingSession) {
-   loginSection.classList.add('app-hidden')
+   // FIX: Landing Page und Login-Sektion beim App-Start rigoros verstecken, wenn eine Session läuft!
+   const landingSection = document.getElementById('app-landing')
+   if (landingSection) landingSection.classList.add('app-hidden')
+   if (loginSection) loginSection.classList.add('app-hidden')
 
    if (Auth.hasWelcomeShown()) {
       AnimationUtils.prepareDashboardView(
