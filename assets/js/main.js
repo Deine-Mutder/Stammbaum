@@ -265,7 +265,10 @@ loginForm.addEventListener('submit', (event) => {
    const exitTl = animateLoginOut()
    exitTl.eventCallback('onComplete', () => {
       loginSection.classList.add('app-hidden')
-      gsap.set(loginContent, { clearProps: 'all' })
+      
+      // FIX: Setzt das gesamte Login-Fenster UND alle verschobenen Buttons/Titel komplett auf CSS-Standard zurück!
+      gsap.set([loginContent, '.login__group', '.login__button', '.login__title', '.login__img'], { clearProps: 'all' })
+      
       AnimationUtils.resetPageScroll()
       playWelcomeSequence(profile.displayName)
    })

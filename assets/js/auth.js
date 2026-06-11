@@ -14,12 +14,12 @@ const Auth = (() => {
    const users = {
       user1: {
          password: '1234',
-         displayName: 'user1',
+         displayName: 'user',
          role: 'member',
       },
-      user2: {
-         password: '1234',
-         displayName: 'user2',
+      konstantin: {
+         password: 'bormann26',
+         displayName: 'Konstantin',
          role: 'member',
       },
       user3: {
