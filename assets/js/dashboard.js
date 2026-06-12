@@ -3,6 +3,15 @@
  * Wird von main.js nach der Willkommensanimation initialisiert.
  */
 
+(function initThemeOnDashboard() {
+   const savedTheme = localStorage.getItem('stammbaum_theme')
+   if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme)
+   } else if (!document.documentElement.hasAttribute('data-theme')) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+   }
+})()
+
 function renderProfileData(username) {
    const profile = Auth.getUserProfile(username)
    if (!profile) return
@@ -39,30 +48,36 @@ function initDashboard({ animate = true, revealImmediately = false } = {}) {
       AnimationUtils.resetGsapDefaults()
    }
 
-   loginSection.classList.add('app-hidden')
+   if (loginSection) {
+      loginSection.classList.add('app-hidden')
+   }
 
-   if (!revealImmediately) {
+   if (!revealImmediately && welcomeScreen) {
       welcomeScreen.classList.remove('welcome-screen--active')
       welcomeScreen.setAttribute('aria-hidden', 'true')
    }
 
-   dashboardEl.classList.remove('app-hidden')
-   dashboardEl.setAttribute('aria-hidden', 'false')
+   if (dashboardEl) {
+      dashboardEl.classList.remove('app-hidden')
+      dashboardEl.setAttribute('aria-hidden', 'false')
+   }
 
-   greetingEl.textContent = `Hallo ${session.displayName}`
+   if (greetingEl) {
+      greetingEl.textContent = `Hallo ${session.displayName}`
+   }
 
    renderProfileData(session.username)
 
    const openTreeBtn = document.getElementById('open-tree-btn')
    if (openTreeBtn) {
-      openTreeBtn.onclick = () => {
+      openTreeBtn.addEventListener('click', () => {
          window.location.href = 'tree.html'
-      }
+      })
    }
 
    const themeToggleBtn = document.getElementById('theme-toggle-btn')
    if (themeToggleBtn) {
-      themeToggleBtn.onclick = () => {
+      themeToggleBtn.addEventListener('click', () => {
          const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark'
          const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
          const target = newTheme === 'light' ? 1 : 0
@@ -75,12 +90,14 @@ function initDashboard({ animate = true, revealImmediately = false } = {}) {
                localStorage.setItem('stammbaum_theme', newTheme)
             },
          })
-      }
+      })
    }
 
-   logoutBtn.onclick = () => {
-      Auth.clearSession()
-      window.location.reload()
+   if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+         Auth.clearSession()
+         window.location.reload()
+      })
    }
 
    if (revealImmediately) {
