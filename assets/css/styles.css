@@ -54,11 +54,11 @@
 
   /* Font colors */
   --title-color-dark: #f3f4f6;
-  --title-color-light: #1f2937;
+  --title-color-light: #111827;
   --title-color: color-mix(in srgb, var(--title-color-light) calc(var(--theme-progress) * 100%), var(--title-color-dark) calc((1 - var(--theme-progress)) * 100%));
 
   --text-color-dark: #a1a1aa;
-  --text-color-light: #4b5563;
+  --text-color-light: #1f2937;
   --text-color: color-mix(in srgb, var(--text-color-light) calc(var(--theme-progress) * 100%), var(--text-color-dark) calc((1 - var(--theme-progress)) * 100%));
 
   --border-color-dark: rgba(255, 255, 255, 0.08);
@@ -93,10 +93,22 @@
 
 html[data-theme="light"] {
   --theme-progress: 1;
+  --title-color: #0f172a;
+  --text-color: #1f2937;
+  --border-color: rgba(0, 0, 0, 0.06);
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-border-hover: rgba(139, 92, 246, 0.35);
 }
 
 html[data-theme="dark"] {
   --theme-progress: 0;
+  --title-color: #f3f4f6;
+  --text-color: #a1a1aa;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(22, 19, 36, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(255, 255, 255, 0.16);
 }
 
 /*========== Responsive typography ==========*/
@@ -1082,7 +1094,7 @@ html.slow-theme-transition .dashboard__card-icon {
    font-size: clamp(1.8rem, 5vw, 3rem); 
    line-height: 1.2;
    font-weight: 800;
-   color: #fff;
+   color: var(--title-color);
    text-align: center; /* Zentriert den Text, das sieht auf dem Handy sauberer aus */
    padding: 0 15px;    /* Gibt dem Text rechts und links Sicherheitsabstand zum Rand */
 }
