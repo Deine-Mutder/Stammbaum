@@ -1359,3 +1359,19 @@ html.slow-theme-transition .dashboard__card-icon {
 .zoom-btn:active {
   transform: scale(0.95);
 }
+
+/* Blendet das eingebaute Passwort-Auge des Browsers aus */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-calendar-picker-indicator {
+    display: none !important;
+}
+
+/* Das hier ist die wichtigste Zeile für Chrome/Edge */
+input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+}
