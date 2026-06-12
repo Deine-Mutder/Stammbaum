@@ -3,52 +3,19 @@
  * Wird von main.js nach der Willkommensanimation initialisiert.
  */
 
-const DEFAULT_CARDS = [
-   {
-      id: 'tree',
-      icon: 'ri-node-tree',
-      title: 'Stammbaum öffnen',
-      description: 'Familienverbindungen erkunden',
-   },
-   {
-      id: 'profiles',
-      icon: 'ri-group-line',
-      title: 'Profile',
-      description: 'Familienmitglieder verwalten',
-   },
-   {
-      id: 'settings',
-      icon: 'ri-settings-3-line',
-      title: 'Einstellungen',
-      description: 'Persönliche Einstellungen anpassen',
-   },
-]
-
-function getDashboardCards(username) {
+function renderProfileData(username) {
    const profile = Auth.getUserProfile(username)
-   if (!profile) return DEFAULT_CARDS
-   return DEFAULT_CARDS
-}
+   if (!profile) return
 
-function renderCards(cards) {
-   const container = document.getElementById('dashboard-cards')
-   container.innerHTML = ''
+   const nameEl = document.getElementById('profile-name')
+   const birthdateEl = document.getElementById('profile-birthdate')
+   const childrenEl = document.getElementById('profile-children')
+   const marriedEl = document.getElementById('profile-married')
 
-   cards.forEach((card) => {
-      const button = document.createElement('button')
-      button.type = 'button'
-      button.className = 'dashboard__card'
-      button.dataset.cardId = card.id
-      button.innerHTML = `
-         <i class="${card.icon} dashboard__card-icon"></i>
-         <span class="dashboard__card-title">${card.title}</span>
-         <span class="dashboard__card-desc">${card.description}</span>
-      `
-      button.addEventListener('click', () => {
-         console.info(`[Dashboard] Karte „${card.title}" angeklickt`)
-      })
-      container.appendChild(button)
-   })
+   if (nameEl) nameEl.textContent = profile.displayName || '-'
+   if (birthdateEl) birthdateEl.textContent = profile.birthdate || '-'
+   if (childrenEl) childrenEl.textContent = profile.children || '-'
+   if (marriedEl) marriedEl.textContent = profile.married || '-'
 }
 
 /**
@@ -84,7 +51,15 @@ function initDashboard({ animate = true, revealImmediately = false } = {}) {
 
    greetingEl.textContent = `Hallo ${session.displayName}`
 
-   renderCards(getDashboardCards(session.username))
+   renderProfileData(session.username)
+
+   const openTreeBtn = document.getElementById('open-tree-btn')
+   if (openTreeBtn) {
+      openTreeBtn.onclick = () => {
+         console.info('[Dashboard] Stammbaum aufrufen angeklickt')
+         alert('Stammbaum-Ansicht wird geladen...')
+      }
+   }
 
    const themeToggleBtn = document.getElementById('theme-toggle-btn')
    if (themeToggleBtn) {
@@ -111,7 +86,7 @@ function initDashboard({ animate = true, revealImmediately = false } = {}) {
 
    if (revealImmediately) {
       gsap.set(dashboardEl, { opacity: 0, filter: 'blur(16px)' })
-      gsap.set('.dashboard__header, .dashboard__welcome, .dashboard__card', { opacity: 0, y: 20 })
+      gsap.set('.dashboard__header, .dashboard__welcome, .dashboard__profile-panel, .dashboard__cta-btn', { opacity: 0, y: 20 })
       dashboardEl.style.pointerEvents = 'none'
    }
 
@@ -125,7 +100,7 @@ function initDashboard({ animate = true, revealImmediately = false } = {}) {
    const tl = gsap.timeline({
       onComplete: () => {
          gsap.set(dashboardEl, { clearProps: 'all' })
-         gsap.set('.dashboard__header, .dashboard__welcome, .dashboard__card', { clearProps: 'all' })
+         gsap.set('.dashboard__header, .dashboard__welcome, .dashboard__profile-panel, .dashboard__cta-btn', { clearProps: 'all' })
          AnimationUtils.resetPageScroll()
       },
    })
@@ -141,9 +116,9 @@ function initDashboard({ animate = true, revealImmediately = false } = {}) {
       '-=0.55'
    )
 
-   tl.fromTo('.dashboard__card',
+   tl.fromTo('.dashboard__profile-panel, .dashboard__cta-btn',
       { opacity: 0, y: 24 },
-      { opacity: 1, y: 0, duration: 0.65, stagger: 0.1, ease: 'power2.out' },
+      { opacity: 1, y: 0, duration: 0.65, stagger: 0.15, ease: 'power2.out' },
       '-=0.45'
    )
 }

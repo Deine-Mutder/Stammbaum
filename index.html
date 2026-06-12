@@ -147,7 +147,39 @@
             <p class="dashboard__message">Willkommen im Familienstammbaum.</p>
          </section>
 
-         <nav class="dashboard__cards" id="dashboard-cards" aria-label="Hauptnavigation"></nav>
+         <!-- Neues Informations-Panel & Hauptaktion -->
+         <div class="dashboard__content" id="dashboard-content">
+            <div class="dashboard__profile-panel">
+               <div class="profile-panel__header">
+                  <i class="ri-user-heart-line profile-panel__avatar-icon"></i>
+                  <h3 class="profile-panel__title">Persönliche Daten</h3>
+               </div>
+               
+               <div class="profile-panel__info">
+                  <div class="profile-panel__item">
+                     <span class="profile-panel__label">Name</span>
+                     <span class="profile-panel__value" id="profile-name">-</span>
+                  </div>
+                  <div class="profile-panel__item">
+                     <span class="profile-panel__label">Geboren am</span>
+                     <span class="profile-panel__value" id="profile-birthdate">-</span>
+                  </div>
+                  <div class="profile-panel__item">
+                     <span class="profile-panel__label">Kinder</span>
+                     <span class="profile-panel__value" id="profile-children">-</span>
+                  </div>
+                  <div class="profile-panel__item">
+                     <span class="profile-panel__label">Verheiratet</span>
+                     <span class="profile-panel__value" id="profile-married">-</span>
+                  </div>
+               </div>
+            </div>
+
+            <button type="button" class="dashboard__cta-btn" id="open-tree-btn">
+               <i class="ri-node-tree"></i>
+               <span>Stammbaum aufrufen</span>
+            </button>
+         </div>
       </div>
    </main>
 

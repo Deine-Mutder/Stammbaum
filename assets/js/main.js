@@ -265,9 +265,9 @@ function playWelcomeSequence(displayName) {
       'hero-exit+=0.95'
    )
 
-   tl.fromTo('.dashboard__card',
+   tl.fromTo('.dashboard__profile-panel, .dashboard__cta-btn',
       { opacity: 0, y: 24 },
-      { opacity: 1, y: 0, duration: 1.44, stagger: 0.08, ease: 'power2.out' },
+      { opacity: 1, y: 0, duration: 1.44, stagger: 0.12, ease: 'power2.out' },
       'hero-exit+=1.0'
    )
 
