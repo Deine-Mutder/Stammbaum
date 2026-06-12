@@ -7,36 +7,8 @@ const Auth = (() => {
    const SESSION_KEY = 'stammbaum_session'
 
    /**
-    * Testkonten – später durch Backend/API ersetzbar.
-    * Jeder Eintrag kann um benutzer-spezifische Felder ergänzt werden
-    * (z. B. stammbaumId, permissions, theme).
+    * Benutzerkonten werden nun aus der externen 'data.js' (USER_DATA) geladen.
     */
-   const users = {
-      user: {
-         password: '1234',
-         displayName: 'user',
-         role: 'member',
-         birthdate: '01.01.1990',
-         children: 'Nein',
-         married: 'Nein',
-      },
-      konstantin: {
-         password: 'bormann26',
-         displayName: 'Konstantin',
-         role: 'member',
-         birthdate: '26.11.1999',
-         children: 'Nein',
-         married: 'Nein',
-      },
-      user3: {
-         password: '1234',
-         displayName: 'user3',
-         role: 'member',
-         birthdate: '15.05.1985',
-         children: 'Ja',
-         married: 'Ja',
-      },
-   }
 
    /**
     * Prüft Benutzername und Passwort gegen die registrierten Konten.
@@ -44,7 +16,7 @@ const Auth = (() => {
     */
    function validateLogin(username, password) {
       const normalizedUsername = username.trim().toLowerCase()
-      const user = users[normalizedUsername]
+      const user = USER_DATA[normalizedUsername]
 
       if (!user || user.password !== password) {
          return null
@@ -102,7 +74,7 @@ const Auth = (() => {
     * Basis für spätere benutzerbezogene Ansichten und Inhalte.
     */
    function getUserProfile(username) {
-      return users[username] ?? null
+      return USER_DATA[username] ?? null
    }
 
    /**
