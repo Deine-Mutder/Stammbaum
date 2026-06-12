@@ -1096,3 +1096,282 @@ html.slow-theme-transition .dashboard__card-icon {
    position: relative;
    text-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
 }
+
+/*=============== FAMILY TREE PAGE ===============*/
+.tree-page {
+  min-height: 100vh;
+  padding: 3rem 1.5rem 4rem;
+}
+
+.tree-page__container {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+/* Header links */
+.header__left-group {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.tree-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  background-image: var(--glass-sheen);
+  border: 1px solid var(--glass-border);
+  color: var(--title-color);
+  font-size: 1.25rem;
+  box-shadow: var(--glass-shadow);
+  cursor: pointer;
+  transition: transform 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.tree-back-btn:hover {
+  transform: translateY(-2px) translateX(-3px);
+  border-color: var(--first-color);
+  color: var(--first-color);
+}
+
+.tree-back-btn:active {
+  transform: translateY(1px);
+}
+
+/* Info Section */
+.tree-info-section {
+  margin-bottom: 2.25rem;
+}
+
+.tree-info__greeting {
+  font-size: 1.5rem;
+  color: var(--title-color);
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.tree-info__help {
+  font-size: var(--small-font-size);
+  color: var(--text-color);
+  font-weight: 400;
+}
+
+/* Viewport und Panning/Zoom-Fläche */
+.tree-viewport {
+  position: relative;
+  width: 100%;
+  height: 65vh;
+  min-height: 520px;
+  border-radius: 2rem;
+  background-color: rgba(12, 11, 22, 0.35);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), inset 0 2px 8px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+}
+
+[data-theme="light"] .tree-viewport {
+  background-color: rgba(255, 255, 255, 0.45);
+  box-shadow: var(--glass-shadow), inset 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tree-viewport:active {
+  cursor: grabbing;
+}
+
+.tree-container {
+  position: absolute;
+  width: max-content;
+  height: max-content;
+  transform-origin: 0 0;
+  transition: transform 0.05s ease-out;
+}
+
+.tree-content {
+  display: flex;
+  justify-content: center;
+  padding: 5rem 6rem;
+  position: relative;
+}
+
+.tree-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Verbindungslinien-Styling */
+.tree-line {
+  fill: none;
+  stroke: var(--first-color);
+  stroke-width: 2.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.75;
+  transition: stroke 0.5s;
+}
+
+.tree-line--spouse {
+  stroke: var(--text-color);
+  stroke-width: 2px;
+  stroke-dasharray: 4 6;
+  opacity: 0.6;
+}
+
+/* Flexbox-Struktur des Stammbaums */
+.family-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3.5rem; /* Vertikaler Abstand zwischen Generationen */
+  position: relative;
+  z-index: 2;
+}
+
+.couple {
+  display: flex;
+  gap: 2rem; /* Horizontaler Abstand zwischen Partnern */
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.children-row {
+  display: flex;
+  gap: 3.5rem; /* Horizontaler Abstand zwischen Zweigen */
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+}
+
+/* Personen-Karte */
+.person-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 230px;
+  padding: 1rem 1.25rem;
+  border-radius: 1.25rem;
+  background-color: var(--glass-bg);
+  background-image: var(--glass-sheen);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  color: var(--title-color);
+  position: relative;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+
+.person-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+/* Highlight für aktuellen Benutzer (Konstantin) */
+.person-card--current {
+  border: 2px solid var(--first-color);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.person-card--current::after {
+  content: 'Du';
+  position: absolute;
+  top: -10px;
+  right: 15px;
+  background-color: var(--first-color);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.4);
+}
+
+.person-card__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(var(--first-color-rgb), 0.1);
+  color: var(--first-color);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  transition: transform 0.3s;
+}
+
+.person-card:hover .person-card__avatar {
+  transform: scale(1.08) rotate(5deg);
+}
+
+.person-card__details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.person-card__name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--title-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.person-card__dates {
+  font-size: 0.75rem;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+/* Schwebende Zoom-Steuerung */
+.zoom-controls {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  z-index: 10;
+}
+
+.zoom-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  background-image: var(--glass-sheen);
+  border: 1px solid var(--glass-border);
+  color: var(--title-color);
+  font-size: 1.2rem;
+  box-shadow: var(--glass-shadow);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.zoom-btn:hover {
+  transform: scale(1.08);
+  border-color: var(--first-color);
+  color: var(--first-color);
+}
+
+.zoom-btn:active {
+  transform: scale(0.95);
+}

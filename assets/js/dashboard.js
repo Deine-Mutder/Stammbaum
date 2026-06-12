@@ -56,8 +56,7 @@ function initDashboard({ animate = true, revealImmediately = false } = {}) {
    const openTreeBtn = document.getElementById('open-tree-btn')
    if (openTreeBtn) {
       openTreeBtn.onclick = () => {
-         console.info('[Dashboard] Stammbaum aufrufen angeklickt')
-         alert('Stammbaum-Ansicht wird geladen...')
+         window.location.href = 'tree.html'
       }
    }
 

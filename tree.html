@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+   <link rel="stylesheet" href="assets/css/styles.css">
+
+   <script>
+      (function() {
+         try {
+            const rawSession = sessionStorage.getItem('stammbaum_session');
+            if (rawSession) {
+               const session = JSON.parse(rawSession);
+               if (session && session.welcomeShown) {
+                  const savedTheme = localStorage.getItem('stammbaum_theme') || 'light';
+                  document.documentElement.setAttribute('data-theme', savedTheme);
+                  return;
+               }
+            }
+         } catch (e) {
+            console.error("Error loading theme", e);
+         }
+         document.documentElement.setAttribute('data-theme', 'dark');
+      })();
+   </script>
+
+   <title>Familienstammbaum – Stammbaum-Ansicht</title>
+</head>
+<body>
+   <!-- Wabernder Liquid Background für Premium-Look -->
+   <div class="liquid-bg" aria-hidden="true">
+      <div class="liquid-bg__theme-bg liquid-bg__theme-bg--dark"></div>
+      <div class="liquid-bg__theme-bg liquid-bg__theme-bg--light"></div>
+      <div class="liquid-bg__blob liquid-bg__blob--1"></div>
+      <div class="liquid-bg__blob liquid-bg__blob--2"></div>
+      <div class="liquid-bg__blob liquid-bg__blob--3"></div>
+   </div>
+
+   <main class="tree-page" id="app-tree">
+      <div class="tree-page__container">
+         <!-- Einheitlicher Header -->
+         <header class="dashboard__header">
+            <div class="header__left-group">
+               <a href="index.html" class="tree-back-btn" title="Zurück zum Dashboard">
+                  <i class="ri-arrow-left-line"></i>
+               </a>
+               <h1 class="dashboard__title">Familienstammbaum</h1>
+            </div>
+            <div class="dashboard__actions">
+               <button type="button" class="dashboard__theme-toggle" id="theme-toggle-btn" aria-label="Farbschema wechseln">
+                  <i class="ri-sun-line theme-icon-light"></i>
+                  <i class="ri-moon-line theme-icon-dark"></i>
+               </button>
+               <button type="button" class="dashboard__logout" id="logout-btn">
+                  <i class="ri-logout-box-r-line"></i>
+                  Abmelden
+               </button>
+            </div>
+         </header>
+
+         <!-- Sub-Header / Info -->
+         <section class="tree-info-section">
+            <h2 class="tree-info__greeting" id="tree-greeting">Stammbaum der Familie Bormann</h2>
+            <p class="tree-info__help">Ziehe mit der Maus/dem Finger zum Verschieben. Scrolle oder nutze die Buttons zum Zoomen.</p>
+         </section>
+
+         <!-- Zoom- und Pan-Bereich -->
+         <div class="tree-viewport" id="tree-viewport">
+            <div class="tree-container" id="tree-container">
+               <!-- SVG für Verbindungslinien -->
+               <svg class="tree-svg" id="tree-connections"></svg>
+               
+               <!-- Dynamisch generierter HTML-Stammbaum -->
+               <div class="tree-content" id="tree-content"></div>
+            </div>
+
+            <!-- Schwebende Zoom-Steuerung -->
+            <div class="zoom-controls">
+               <button type="button" class="zoom-btn" id="zoom-in" title="Vergrößern">
+                  <i class="ri-add-line"></i>
+               </button>
+               <button type="button" class="zoom-btn" id="zoom-out" title="Verkleinern">
+                  <i class="ri-subtract-line"></i>
+               </button>
+               <button type="button" class="zoom-btn" id="zoom-fit" title="Ganzes Bild anzeigen">
+                  <i class="ri-aspect-ratio-line"></i>
+               </button>
+            </div>
+         </div>
+      </div>
+   </main>
+
+   <!-- Scripts -->
+   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+   <script src="assets/js/data.js"></script>
+   <script src="assets/js/auth.js"></script>
+   <script src="assets/js/tree.js"></script>
+</body>
+</html>
