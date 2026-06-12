@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tablet-Viewer - Test</title>
+  <style>
+    body { font-family: Inter, sans-serif; background:#f3f4f6; color:#0f172a; display:flex; gap:20px; align-items:center; justify-content:center; height:100vh; margin:0; }
+    .frame-wrap { box-shadow:0 12px 30px rgba(0,0,0,0.12); border-radius:12px; overflow:hidden; }
+    .controls { display:flex; flex-direction:column; gap:8px; }
+    button { padding:8px 12px; border-radius:8px; border:none; background:#7c3aed; color:#fff; cursor:pointer }
+    iframe { display:block; border:0; }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <button data-w="768" data-h="1024">Tablet Portrait - 768×1024</button>
+    <button data-w="1024" data-h="768">Tablet Landscape - 1024×768</button>
+    <button data-w="834" data-h="1194">iPad Pro 11" - 834×1194</button>
+    <button id="open-original">Original (neues Fenster)</button>
+  </div>
+
+  <div class="frame-wrap">
+    <iframe id="preview" width="768" height="1024" src="index.html" title="Tablet Preview"></iframe>
+  </div>
+
+<script>
+  const buttons = document.querySelectorAll('button[data-w]')
+  const iframe = document.getElementById('preview')
+  buttons.forEach(btn => btn.addEventListener('click', () => {
+    iframe.width = btn.dataset.w
+    iframe.height = btn.dataset.h
+  }))
+  document.getElementById('open-original').addEventListener('click', () => {
+    window.open('index.html', '_blank')
+  })
+</script>
+</body>
+</html>
