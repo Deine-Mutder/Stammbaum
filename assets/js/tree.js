@@ -1,26 +1,20 @@
 /**
  * Stammbaum-Logik zur Visualisierung und Interaktivität.
+ * Baut den Baum dynamisch aus FAMILY_TREE (data.js) auf und
+ * steuert Zoom und Pan per Maus/Touch.
  */
 document.addEventListener('DOMContentLoaded', () => {
-   // 1. Authentifizierung prüfen
-   if (!Auth.requireAuth('index.html')) return;
-
-   const session = Auth.getSession();
-   
-   // 2. Begrüßung und Name im Header anzeigen
-   const greetingEl = document.getElementById('tree-greeting');
-   if (greetingEl && session) {
-      greetingEl.textContent = `Familienstammbaum der Bormanns – Hallo ${session.displayName}`;
+   // Authentifizierung prüfen (falls Auth-Modul geladen ist)
+   const session = typeof Auth !== 'undefined' ? Auth.getSession() : null;
+   if (typeof Auth !== 'undefined') {
+      if (!Auth.requireAuth('index.html')) return;
    }
 
-   // 3. Stammbaum-Rendern initialisieren
+   // Stammbaum-Rendern initialisieren
    initFamilyTree(session);
 
-   // 4. Pan- und Zoom-Steuerung einrichten
+   // Pan- und Zoom-Steuerung einrichten
    initPanZoom();
-
-   // 5. Header-Aktionen (Theme-Toggle und Logout)
-   initHeaderActions();
 });
 
 /**
@@ -30,49 +24,47 @@ function initFamilyTree(session) {
    const treeContent = document.getElementById('tree-content');
    if (!treeContent) return;
 
-    // Finde alle Wurzel-Einheiten (Personen ohne Eltern im Datensatz)
-    const roots = FAMILY_TREE.filter(person => !person.parents || person.parents.length === 0);
-    const visited = new Set();
+   // Wurzeln des Baums dynamisch ermitteln (Personen ohne Eltern im Datensatz)
+   const roots = FAMILY_TREE.filter(person => !person.parents || person.parents.length === 0);
+   const visited = new Set();
 
-    roots.forEach(root => {
-       if (visited.has(root.id)) return;
+   roots.forEach(root => {
+      if (visited.has(root.id)) return;
 
-       visited.add(root.id);
-       let parentIds = [root.id];
-       if (root.spouseId) {
-          visited.add(root.spouseId);
-          parentIds.push(root.spouseId);
-       }
+      visited.add(root.id);
+      let parentIds = [root.id];
+      if (root.spouseId) {
+         visited.add(root.spouseId);
+         parentIds.push(root.spouseId);
+      }
 
-       const rootUnit = getFamilyUnit(parentIds);
-       const treeHtml = renderFamilyUnit(rootUnit, session);
-       treeContent.appendChild(treeHtml);
-    });
+      const rootUnit = getFamilyUnit(parentIds);
+      const treeHtml = renderFamilyUnit(rootUnit, session);
+      treeContent.appendChild(treeHtml);
+   });
 
-   // Kurzer Timeout, damit das Layout im Browser berechnet ist, bevor die Linien gezeichnet werden
+   // Kurz warten, damit das CSS-Layout gerendert ist, bevor Linien gezeichnet und skaliert wird
    setTimeout(() => {
       drawTreeLines();
-      fitTreeToViewport(); // View-All-Mode beim Laden
+      fitTreeToViewport(); // Auto-Scale (View-All-Mode)
    }, 100);
 
-   // Fenster-Resize abfangen, um Linien neu zu zeichnen
+   // Fenster-Größenänderung abfangen, um Linien neu zu berechnen
    window.addEventListener('resize', () => {
       drawTreeLines();
    });
 }
 
 /**
- * Rekursiver Stammbaum-Datenstruktur-Konstruktor.
+ * Erstellt eine Familieneinheit (Eltern und Kinder).
  */
 function getFamilyUnit(parentIds) {
-   // Finde Kinder, die BEIDE Elternteile in ihren parents-Referenzen haben
    const children = FAMILY_TREE.filter(person => {
       if (!person.parents) return false;
       return parentIds.every(pId => person.parents.includes(pId));
    });
 
    const childrenUnits = children.map(child => {
-      // Wenn das Kind einen Partner hat, bildet dieses Paar eine neue Familieneinheit
       if (child.spouseId) {
          return getFamilyUnit([child.id, child.spouseId]);
       } else {
@@ -87,13 +79,13 @@ function getFamilyUnit(parentIds) {
 }
 
 /**
- * Erstellt das HTML für eine Familieneinheit (Couple + Children).
+ * Generiert die HTML-Karten und Zweige.
  */
 function renderFamilyUnit(unit, session) {
    const branchDiv = document.createElement('div');
    branchDiv.className = 'family-branch';
 
-   // Couple Container (Paar)
+   // Paar-Container
    const coupleDiv = document.createElement('div');
    coupleDiv.className = 'couple';
 
@@ -104,7 +96,7 @@ function renderFamilyUnit(unit, session) {
          card.className = 'person-card';
          card.id = `card-${person.id}`;
          
-         // Markiere den aktuell eingeloggten Benutzer
+         // Aktuellen Benutzer hervorheben
          if (session && person.id === session.username) {
             card.classList.add('person-card--current');
          }
@@ -126,7 +118,7 @@ function renderFamilyUnit(unit, session) {
 
    branchDiv.appendChild(coupleDiv);
 
-   // Kinder-Container
+   // Kinder-Zweige
    if (unit.children && unit.children.length > 0) {
       const childrenRow = document.createElement('div');
       childrenRow.className = 'children-row';
@@ -142,25 +134,24 @@ function renderFamilyUnit(unit, session) {
 }
 
 /**
- * Zeichnet orthogonale Linien zwischen Eltern und Kindern.
+ * Zeichnet die Verbindungslinien im SVG-Overlay.
  */
 function drawTreeLines() {
    const svg = document.getElementById('tree-connections');
    const treeContent = document.getElementById('tree-content');
    if (!svg || !treeContent) return;
 
-   // SVG-Leinwandgröße an die Größe des Stammbaums anpassen
    const cw = treeContent.scrollWidth;
    const ch = treeContent.scrollHeight;
    svg.setAttribute('width', cw);
    svg.setAttribute('height', ch);
    svg.setAttribute('viewBox', `0 0 ${cw} ${ch}`);
 
-   svg.innerHTML = ''; // Bisherige Linien löschen
+   svg.innerHTML = ''; // Vorherige Linien löschen
 
    const rootRect = treeContent.getBoundingClientRect();
 
-   // Lokale Koordinatenumrechner unter Einbeziehung des aktuellen Zoom-Faktors
+   // Transformierte Koordinaten in lokale Koordinaten umrechnen (wichtig für Zoom)
    const toLocalX = (x) => (x - rootRect.left) / currentScale;
    const toLocalY = (y) => (y - rootRect.top) / currentScale;
 
@@ -174,7 +165,6 @@ function drawTreeLines() {
          let parentMidX, parentBottomY;
 
          if (cards.length === 2) {
-            // Zwei Partner: Zeichne Verbindungslinie zwischen ihnen
             const rectA = cards[0].getBoundingClientRect();
             const rectB = cards[1].getBoundingClientRect();
 
@@ -183,6 +173,7 @@ function drawTreeLines() {
             const bx = toLocalX((rectB.left + rectB.right) / 2);
             const by = toLocalY((rectB.top + rectB.bottom) / 2);
 
+            // Linie zwischen Partnern
             const spouseLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             spouseLine.setAttribute('x1', ax);
             spouseLine.setAttribute('y1', ay);
@@ -194,7 +185,7 @@ function drawTreeLines() {
             parentMidX = (ax + bx) / 2;
             parentBottomY = toLocalY(Math.max(rectA.bottom, rectB.bottom));
 
-            // Vertikaler Tropfen ab Mitte des Partner-Verbinders bis zum Karten-Boden
+            // Vertikale Abzweigung nach unten
             const verticalDrop = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             verticalDrop.setAttribute('x1', parentMidX);
             verticalDrop.setAttribute('y1', (ay + by) / 2);
@@ -204,7 +195,6 @@ function drawTreeLines() {
             svg.appendChild(verticalDrop);
 
          } else if (cards.length === 1) {
-            // Einzelnes Elternteil
             const rect = cards[0].getBoundingClientRect();
             parentMidX = toLocalX((rect.left + rect.right) / 2);
             parentBottomY = toLocalY(rect.bottom);
@@ -212,7 +202,6 @@ function drawTreeLines() {
             return;
          }
 
-         // Kinder-Zweige abfragen
          const childrenBranches = childrenRow.querySelectorAll(':scope > .family-branch');
          if (childrenBranches.length > 0) {
             let firstChildX = Infinity;
@@ -228,7 +217,6 @@ function drawTreeLines() {
                      let targetX = toLocalX((cRect1.left + cRect1.right) / 2);
                      const targetY = toLocalY(cRect1.top);
 
-                     // Wenn das Kind verheiratet ist (2 Karten), verbinde in die Mitte der zwei Karten
                      if (childCards.length === 2) {
                         const cRect2 = childCards[1].getBoundingClientRect();
                         targetX = toLocalX((cRect1.left + cRect2.right) / 2);
@@ -242,16 +230,15 @@ function drawTreeLines() {
             });
 
             if (childrenTargets.length > 0) {
-               // Horizontale Brücke 20px unter dem Paar
-               const yBridge = parentBottomY + 20;
+               const yBridge = parentBottomY + 20; // Brücke 20px unter dem Paar
 
-               // Stamm-Strich von Eltern zu Brücke
+               // Verbindungslinie zur Brücke
                const trunk = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                trunk.setAttribute('d', `M ${parentMidX} ${parentBottomY} L ${parentMidX} ${yBridge}`);
                trunk.setAttribute('class', 'tree-line');
                svg.appendChild(trunk);
 
-               // Brücken-Verbinder bei mehreren Kindern
+               // Horizontale Brückenlinie
                if (childrenTargets.length > 1) {
                   const bridge = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                   bridge.setAttribute('d', `M ${firstChildX} ${yBridge} L ${lastChildX} ${yBridge}`);
@@ -259,7 +246,7 @@ function drawTreeLines() {
                   svg.appendChild(bridge);
                }
 
-               // Verbindungs-Striche von Brücke zu Kindern
+               // Linien von Brücke zu Kindern
                childrenTargets.forEach(target => {
                   const lineToChild = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                   lineToChild.setAttribute('d', `M ${target.x} ${yBridge} L ${target.x} ${target.y}`);
@@ -273,14 +260,14 @@ function drawTreeLines() {
 }
 
 /**
- * Globale Zoom/Pan Zustandsvariablen
+ * Zoom und Pan Zustand
  */
 let currentScale = 1;
 let panX = 0;
 let panY = 0;
 
 /**
- * Initialisiert das Pan- und Zoom-Verhalten
+ * Initialisiert die Maus- und Touch-Gesten.
  */
 function initPanZoom() {
    const viewport = document.getElementById('tree-viewport');
@@ -291,9 +278,8 @@ function initPanZoom() {
    let startX = 0;
    let startY = 0;
 
-   // Maus-Verschiebung (Drag)
+   // Verschieben mit der Maus (Drag)
    viewport.addEventListener('mousedown', (e) => {
-      // Nur linke Maustaste
       if (e.button !== 0) return;
       isDragging = true;
       startX = e.clientX - panX;
@@ -313,7 +299,7 @@ function initPanZoom() {
       viewport.style.cursor = 'grab';
    });
 
-   // Zoom über Mausrad (Zentriert um den Mauszeiger)
+   // Zoom per Mausrad (um den Zeiger zentriert)
    viewport.addEventListener('wheel', (e) => {
       e.preventDefault();
       const zoomIntensity = 0.08;
@@ -326,14 +312,13 @@ function initPanZoom() {
       
       currentScale = Math.min(Math.max(currentScale * zoomFactor, 0.15), 2.5);
 
-      // Verschiebe Pan, sodass unter dem Mauszeiger vergrößert wird
       panX = mouseX - (mouseX - panX) * (currentScale / prevScale);
       panY = mouseY - (mouseY - panY) * (currentScale / prevScale);
 
       applyTransform();
    });
 
-   // TOUCH GESTEN (Drag & Pinch-to-Zoom für mobile Geräte)
+   // TOUCH GESTEN (Wischen & Pinch-to-Zoom für Smartphones)
    let touchStartDist = 0;
    let touchStartScale = 1;
 
@@ -343,7 +328,7 @@ function initPanZoom() {
          startX = e.touches[0].clientX - panX;
          startY = e.touches[0].clientY - panY;
       } else if (e.touches.length === 2) {
-         isDragging = false; // Dragging deaktivieren bei Zwei-Finger-Zoom
+         isDragging = false;
          touchStartDist = getTouchDistance(e.touches[0], e.touches[1]);
          touchStartScale = currentScale;
 
@@ -382,7 +367,7 @@ function initPanZoom() {
       return Math.sqrt((t1.clientX - t2.clientX) ** 2 + (t1.clientY - t2.clientY) ** 2);
    }
 
-   // Zoom Buttons
+   // Zoom Buttons steuern
    document.getElementById('zoom-in').onclick = () => {
       zoomByCenter(1.2);
    };
@@ -397,7 +382,7 @@ function initPanZoom() {
 }
 
 /**
- * Wendet die Verschiebung und Skalierung auf den Baum an.
+ * Wendet Verschiebung und Zoom auf den Container an.
  */
 function applyTransform() {
    const container = document.getElementById('tree-container');
@@ -407,7 +392,7 @@ function applyTransform() {
 }
 
 /**
- * Zoomt zentriert im Viewport.
+ * Hilfsfunktion zum Zoomen aus dem Zentrum.
  */
 function zoomByCenter(factor) {
    const viewport = document.getElementById('tree-viewport');
@@ -426,7 +411,7 @@ function zoomByCenter(factor) {
 }
 
 /**
- * Passt den Stammbaum so an, dass er vollständig im Viewport sichtbar ist (View-All).
+ * Passt den Stammbaum komplett in die Bildschirmgröße ein (View-All).
  */
 function fitTreeToViewport() {
    const viewport = document.getElementById('tree-viewport');
@@ -438,49 +423,13 @@ function fitTreeToViewport() {
    const cw = content.scrollWidth;
    const ch = content.scrollHeight;
 
-   // Maßstab ermitteln
-   const scaleX = vw / (cw + 60); // 30px Abstand links/rechts
-   const scaleY = vh / (ch + 60); // 30px Abstand oben/unten
+   const scaleX = vw / (cw + 40); // 20px Rand
+   const scaleY = vh / (ch + 40);
 
-   currentScale = Math.min(scaleX, scaleY, 1.0); // maximal 1x Vergrößerung
+   currentScale = Math.min(scaleX, scaleY, 1.0); // Maximal 1.0x
    
-   // Zentrieren
    panX = (vw - cw * currentScale) / 2;
-   panY = Math.max((vh - ch * currentScale) / 2, 30);
+   panY = (vh - ch * currentScale) / 2;
 
    applyTransform();
-}
-
-/**
- * Initialisiert Header-Interaktionen (Themewechsel & Abmelden).
- */
-function initHeaderActions() {
-   const themeToggleBtn = document.getElementById('theme-toggle-btn');
-   if (themeToggleBtn) {
-      themeToggleBtn.onclick = () => {
-         const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-         const target = newTheme === 'light' ? 1 : 0;
-         
-         gsap.to(document.documentElement, {
-            duration: 0.9,
-            ease: 'power2.out',
-            css: { '--theme-progress': target },
-            onComplete: () => {
-               document.documentElement.setAttribute('data-theme', newTheme);
-               localStorage.setItem('stammbaum_theme', newTheme);
-               // Rote Linien und Farben anpassen
-               drawTreeLines();
-            },
-         });
-      };
-   }
-
-   const logoutBtn = document.getElementById('logout-btn');
-   if (logoutBtn) {
-      logoutBtn.onclick = () => {
-         Auth.clearSession();
-         window.location.href = 'index.html';
-      };
-   }
 }

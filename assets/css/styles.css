@@ -1097,91 +1097,63 @@ html.slow-theme-transition .dashboard__card-icon {
    text-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
 }
 
-/*=============== FAMILY TREE PAGE ===============*/
-.tree-page {
-  min-height: 100vh;
-  padding: 3rem 1.5rem 4rem;
+/*=============== FAMILY TREE FULLSCREEN PAGE ===============*/
+.tree-body {
+  overflow: hidden !important;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  position: fixed;
 }
 
-.tree-page__container {
-  max-width: 1280px;
-  margin-inline: auto;
-}
-
-/* Header links */
-.header__left-group {
-  display: flex;
+/* Schwebender Zurück-Button */
+.floating-back-btn {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  display: inline-flex;
   align-items: center;
-  gap: 1.25rem;
-}
-
-.tree-back-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+  gap: 0.65rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 4rem;
   background: var(--glass-bg);
   background-image: var(--glass-sheen);
   border: 1px solid var(--glass-border);
   color: var(--title-color);
-  font-size: 1.25rem;
+  font-weight: 600;
   box-shadow: var(--glass-shadow);
+  z-index: 100;
   cursor: pointer;
-  transition: transform 0.25s, border-color 0.25s, color 0.25s;
+  text-decoration: none;
+  transition: transform 0.25s, border-color 0.25s, color 0.25s, box-shadow 0.25s;
 }
 
-.tree-back-btn:hover {
-  transform: translateY(-2px) translateX(-3px);
+.floating-back-btn:hover {
+  transform: translateY(-2px);
   border-color: var(--first-color);
   color: var(--first-color);
+  box-shadow: var(--glass-shadow-hover);
 }
 
-.tree-back-btn:active {
+.floating-back-btn:active {
   transform: translateY(1px);
 }
 
-/* Info Section */
-.tree-info-section {
-  margin-bottom: 2.25rem;
-}
-
-.tree-info__greeting {
-  font-size: 1.5rem;
-  color: var(--title-color);
-  margin-bottom: 0.35rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.tree-info__help {
-  font-size: var(--small-font-size);
-  color: var(--text-color);
-  font-weight: 400;
-}
-
-/* Viewport und Panning/Zoom-Fläche */
-.tree-viewport {
-  position: relative;
-  width: 100%;
-  height: 65vh;
-  min-height: 520px;
-  border-radius: 2rem;
-  background-color: rgba(12, 11, 22, 0.35);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow), inset 0 2px 8px rgba(0, 0, 0, 0.3);
+/* Vollbild Pan/Zoom Viewport */
+.fullscreen-viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   cursor: grab;
   user-select: none;
+  z-index: 2;
 }
 
-[data-theme="light"] .tree-viewport {
-  background-color: rgba(255, 255, 255, 0.45);
-  box-shadow: var(--glass-shadow), inset 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.tree-viewport:active {
+.fullscreen-viewport:active {
   cursor: grabbing;
 }
 
@@ -1196,7 +1168,7 @@ html.slow-theme-transition .dashboard__card-icon {
 .tree-content {
   display: flex;
   justify-content: center;
-  padding: 5rem 6rem;
+  padding: 8rem 6rem 6rem; /* Oben extra Padding wegen Zurück-Button */
   position: relative;
 }
 
