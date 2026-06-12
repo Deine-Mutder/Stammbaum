@@ -336,6 +336,9 @@ if (existingSession) {
 
 /*=============== SHOW / HIDE PASSWORD ===============*/
 const passwordToggleEye = document.getElementById('password-eye')
+const loginImage = document.querySelector('.login__img')
+const loginImageDefault = 'assets/img/login-bg.png'
+const loginImageReveal = 'assets/img/login-bg 2.png'
 
 if (passwordToggleEye && passwordInput) {
    passwordToggleEye.addEventListener('click', () => {
@@ -343,10 +346,12 @@ if (passwordToggleEye && passwordInput) {
          passwordInput.type = 'text'
          passwordToggleEye.classList.remove('ri-eye-off-line')
          passwordToggleEye.classList.add('ri-eye-line')
+         if (loginImage) loginImage.src = loginImageReveal
       } else {
          passwordInput.type = 'password'
          passwordToggleEye.classList.remove('ri-eye-line')
          passwordToggleEye.classList.add('ri-eye-off-line')
+         if (loginImage) loginImage.src = loginImageDefault
       }
    })
 }
