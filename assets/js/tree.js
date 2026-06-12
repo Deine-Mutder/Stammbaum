@@ -30,12 +30,24 @@ function initFamilyTree(session) {
    const treeContent = document.getElementById('tree-content');
    if (!treeContent) return;
 
-   // Startpunkt der Bormann-Linie (Albert & Bertha sind Generation 0)
-   const rootUnit = getFamilyUnit(['albert', 'bertha']);
+    // Finde alle Wurzel-Einheiten (Personen ohne Eltern im Datensatz)
+    const roots = FAMILY_TREE.filter(person => !person.parents || person.parents.length === 0);
+    const visited = new Set();
 
-   // Rekursives Rendern des Stammbaums
-   const treeHtml = renderFamilyUnit(rootUnit, session);
-   treeContent.appendChild(treeHtml);
+    roots.forEach(root => {
+       if (visited.has(root.id)) return;
+
+       visited.add(root.id);
+       let parentIds = [root.id];
+       if (root.spouseId) {
+          visited.add(root.spouseId);
+          parentIds.push(root.spouseId);
+       }
+
+       const rootUnit = getFamilyUnit(parentIds);
+       const treeHtml = renderFamilyUnit(rootUnit, session);
+       treeContent.appendChild(treeHtml);
+    });
 
    // Kurzer Timeout, damit das Layout im Browser berechnet ist, bevor die Linien gezeichnet werden
    setTimeout(() => {
