@@ -264,6 +264,18 @@ html[data-theme="light"] .liquid-bg__theme-bg--light {
               filter 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+/* Promote blobs to their own layer for smoother transforms */
+.liquid-bg__blob,
+.liquid-bg__theme-bg,
+.login__img,
+.welcome-screen__text,
+.dashboard__header {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 html.slow-theme-transition .liquid-bg__blob {
   transition: background-color 2.2s cubic-bezier(0.25, 0.8, 0.25, 1),
               opacity 2.2s cubic-bezier(0.25, 0.8, 0.25, 1),
@@ -301,6 +313,29 @@ html.slow-theme-transition .liquid-bg__blob {
   left: 50%;
   transform: translate(-50%, -50%);
   animation: float-blob-3 22s infinite alternate ease-in-out;
+}
+
+/* Tablet tweaks: reduce heavy blur/size to improve performance while keeping movement */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .liquid-bg__blob {
+    filter: blur(80px);
+    opacity: 0.7;
+  }
+
+  .liquid-bg__blob--1 { width: 380px; height: 380px; }
+  .liquid-bg__blob--2 { width: 420px; height: 420px; }
+  .liquid-bg__blob--3 { width: 320px; height: 320px; }
+
+  /* Slightly reduce shadow-heavy effects on tablet to avoid jank */
+  :root { --glass-shadow: 0 12px 36px rgba(0,0,0,0.28); }
+
+  /* Promote animated UI pieces to GPU layers */
+  .landing__inner, .login__img, .dashboard__header, .welcome-screen__text {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+  }
 }
 
 @keyframes float-blob-1 {

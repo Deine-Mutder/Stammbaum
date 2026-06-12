@@ -11,6 +11,22 @@ const AnimationUtils = (() => {
       })
    }
 
+   /** Enable lightweight performance hints for GSAP (force GPU compositing) */
+   function enablePerformanceOptimizations() {
+      try {
+         if (gsap && typeof gsap.defaults === 'function') {
+            gsap.defaults({ force3D: true })
+         }
+         if (gsap && gsap.ticker && typeof gsap.ticker.fps === 'function') {
+            // Keep default RAF behavior but cap FPS on older devices if needed.
+            // We don't force a lower FPS here to avoid changing animation timing.
+         }
+         document.documentElement.classList.add('perf-optimised')
+      } catch (e) {
+         // silent fail if GSAP not available
+      }
+   }
+
    /** Scroll und Overflow auf Normalzustand zurücksetzen. */
    function resetPageScroll() {
       document.documentElement.style.removeProperty('overflow')
@@ -69,5 +85,13 @@ const AnimationUtils = (() => {
       resetWelcomeScreen,
       resetDashboardLayout,
       prepareDashboardView,
+      enablePerformanceOptimizations,
    }
 })()
+
+// Apply performance hints on module load
+try {
+   AnimationUtils.enablePerformanceOptimizations()
+} catch (e) {
+   /* ignore */
+}
