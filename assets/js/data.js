@@ -83,9 +83,9 @@ const USER_DATA = {
       children: 'Nein',
       married: ' -> Nadine',
    },
-   silvy: {
+   sylvi: {
       password: 'bormann26',
-      displayName: 'Silvy',
+      displayName: 'Sylvi',
       role: 'member',
       birthdate: '01.01.1990',
       children: 'Konstantin und Alexander',
@@ -112,8 +112,8 @@ const USER_DATA = {
       displayName: 'Marlies',
       role: 'member',
       birthdate: '01.01.1990',
-      children: 'Nein',
-      married: 'Nein',
+      children: 'Tom, Nadien, Sylvi',
+      married: 'ja',
    },
 }
 
